@@ -11,27 +11,18 @@ The program is written in C and is designed for speed and parallelism.
 *   Utilizes multi-threading to parallelize the search across available CPU cores.
 *   Checks derivation paths: `m/44'/0'/account'/0/index` (for accounts 0-1, indexes 0-9).
 *   Checks both compressed and uncompressed P2PKH addresses.
-*   Placeholder cryptographic functions: The core cryptographic operations (BIP39, BIP32, ECDSA, hashing, Base58) are currently implemented as placeholders. To make this program fully functional, these placeholders in `src/crypto_utils.c` need to be replaced with actual implementations using libraries like OpenSSL, libsecp256k1, and a BIP39/BIP32 library (e.g., from trezor-crypto).
 
 ## Project Structure
 
 ```
 bip39_cracker/
-├── src/                  # Source C files
-│   ├── main.c            # Main orchestrator, argument parsing, threading logic
-│   ├── bip39_utils.c     # Utilities for loading BIP39 wordlist
-│   ├── crypto_utils.c    # Cryptographic operations (currently placeholders)
-│   ├── combinatorics.c   # Combination and permutation generators
-│   └── worker.c          # Worker thread logic for checking mnemonic candidates
-├── include/              # Header files
-│   ├── config.h          # Global constants, variable declarations, error codes
-│   ├── bip39_utils.h
-│   ├── crypto_utils.h
-│   ├── combinatorics.h
-│   └── worker.h
 ├── data/
 │   └── english.txt       # BIP39 English word list (must contain 2048 words)
 ├── obj/                  # Object files (created during compilation)
+├── lib/                  # required libraries
+│   └── libbase58/        # implementation of base58 libary
+│   └── crypto/           # trezor-firmware crypto libary
+│   └── libsecp256k1/     # implementation of secp256k1
 ├── Makefile              # Build script
 └── README.md             # This file
 ```
@@ -43,8 +34,8 @@ bip39_cracker/
 3.  **Cryptographic Libraries (for full functionality)**:
     *   **OpenSSL (libcrypto)**: For SHA256 and RIPEMD160.
     *   **libsecp256k1**: For ECDSA operations (private key to public key).
-    *   **A BIP39/BIP32 implementation**: Such as parts of `trezor-crypto` or another compatible library for `mnemonic_to_seed` and `bip32_derive_private_key`.
-    *   **A Base58Check implementation**: For `ripemd160_to_p2pkh_address`. This might be part of the BIP32/39 library or a separate small library/implementation.
+    *   **A BIP39/BIP32 implementation**: parts of `trezor-firmware`
+    *   **A Base58Check implementation**: Parts of `libbase58` or `trezor-crypto`
 
     The `Makefile` includes linker flags (`-lcrypto -lsecp256k1`) for some of these. You may need to adjust include paths and linker flags based on how these libraries are installed on your system. The current build will link against them if present but will use the placeholder functions from `crypto_utils.c`.
 
